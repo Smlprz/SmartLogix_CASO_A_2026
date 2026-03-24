@@ -49,7 +49,13 @@ CREATE TABLE `company` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
-
+CREATE TABLE COMPANY_USER(
+USER_ID NUMERIC(6) PRIMARY KEY,
+USER_COMPANY_ID NUMERIC(3),
+USERNAME VARCHAR(20),
+PASSWORD VARCHAR(20),
+FOREIGN KEY (USER_COMPANY_ID) REFERENCES COMPANY(ID_COMPANY)
+);
 --
 -- Estructura de tabla para la tabla `company_category`
 --
