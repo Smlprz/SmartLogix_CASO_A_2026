@@ -1,11 +1,11 @@
 -- phpMyAdmin SQL Dump
--- version 5.2.1
+-- version 5.2.3
 -- https://www.phpmyadmin.net/
 --
--- Servidor: 127.0.0.1:4406
--- Tiempo de generación: 24-03-2026 a las 15:09:07
--- Versión del servidor: 10.4.28-MariaDB
--- Versión de PHP: 8.2.4
+-- Host: mysql-vicente.alwaysdata.net
+-- Generation Time: Apr 01, 2026 at 05:03 PM
+-- Server version: 11.4.9-MariaDB
+-- PHP Version: 8.4.19
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,13 +18,13 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Base de datos: `smartlogix`
+-- Database: `vicente_smartlogixdatabase`
 --
 
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `city`
+-- Table structure for table `city`
 --
 
 CREATE TABLE `city` (
@@ -36,7 +36,7 @@ CREATE TABLE `city` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `company`
+-- Table structure for table `company`
 --
 
 CREATE TABLE `company` (
@@ -49,15 +49,9 @@ CREATE TABLE `company` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 -- --------------------------------------------------------
-CREATE TABLE COMPANY_USER(
-USER_ID NUMERIC(6) PRIMARY KEY,
-USER_COMPANY_ID NUMERIC(3),
-USERNAME VARCHAR(20),
-PASSWORD VARCHAR(20),
-FOREIGN KEY (USER_COMPANY_ID) REFERENCES COMPANY(ID_COMPANY)
-);
+
 --
--- Estructura de tabla para la tabla `company_category`
+-- Table structure for table `company_category`
 --
 
 CREATE TABLE `company_category` (
@@ -68,7 +62,20 @@ CREATE TABLE `company_category` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `product`
+-- Table structure for table `COMPANY_USER`
+--
+
+CREATE TABLE `COMPANY_USER` (
+  `USER_ID` decimal(6,0) NOT NULL,
+  `USER_COMPANY_ID` decimal(3,0) DEFAULT NULL,
+  `USERNAME` varchar(20) DEFAULT NULL,
+  `PASSWORD` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `product`
 --
 
 CREATE TABLE `product` (
@@ -83,7 +90,7 @@ CREATE TABLE `product` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `product_category`
+-- Table structure for table `product_category`
 --
 
 CREATE TABLE `product_category` (
@@ -94,7 +101,7 @@ CREATE TABLE `product_category` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `product_order`
+-- Table structure for table `product_order`
 --
 
 CREATE TABLE `product_order` (
@@ -107,7 +114,7 @@ CREATE TABLE `product_order` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `region`
+-- Table structure for table `region`
 --
 
 CREATE TABLE `region` (
@@ -118,7 +125,7 @@ CREATE TABLE `region` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `shipment`
+-- Table structure for table `shipment`
 --
 
 CREATE TABLE `shipment` (
@@ -133,7 +140,7 @@ CREATE TABLE `shipment` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `shipment_order`
+-- Table structure for table `shipment_order`
 --
 
 CREATE TABLE `shipment_order` (
@@ -144,7 +151,7 @@ CREATE TABLE `shipment_order` (
 -- --------------------------------------------------------
 
 --
--- Estructura de tabla para la tabla `warehouse`
+-- Table structure for table `warehouse`
 --
 
 CREATE TABLE `warehouse` (
@@ -155,18 +162,18 @@ CREATE TABLE `warehouse` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 COLLATE=latin1_swedish_ci;
 
 --
--- Índices para tablas volcadas
+-- Indexes for dumped tables
 --
 
 --
--- Indices de la tabla `city`
+-- Indexes for table `city`
 --
 ALTER TABLE `city`
   ADD PRIMARY KEY (`CITY_ID`),
   ADD KEY `REGION_ID` (`REGION_ID`);
 
 --
--- Indices de la tabla `company`
+-- Indexes for table `company`
 --
 ALTER TABLE `company`
   ADD PRIMARY KEY (`ID_COMPANY`),
@@ -175,13 +182,20 @@ ALTER TABLE `company`
   ADD KEY `COMPANY_REGION_ID` (`COMPANY_REGION_ID`);
 
 --
--- Indices de la tabla `company_category`
+-- Indexes for table `company_category`
 --
 ALTER TABLE `company_category`
   ADD PRIMARY KEY (`COMPANY_CATEGORY_ID`);
 
 --
--- Indices de la tabla `product`
+-- Indexes for table `COMPANY_USER`
+--
+ALTER TABLE `COMPANY_USER`
+  ADD PRIMARY KEY (`USER_ID`),
+  ADD KEY `fk_customer` (`USER_COMPANY_ID`);
+
+--
+-- Indexes for table `product`
 --
 ALTER TABLE `product`
   ADD PRIMARY KEY (`PRODUCT_ID`),
@@ -190,26 +204,26 @@ ALTER TABLE `product`
   ADD KEY `PRODUCT_COMPANY_ID` (`PRODUCT_COMPANY_ID`);
 
 --
--- Indices de la tabla `product_category`
+-- Indexes for table `product_category`
 --
 ALTER TABLE `product_category`
   ADD PRIMARY KEY (`PRODUCT_CATEGORY_ID`);
 
 --
--- Indices de la tabla `product_order`
+-- Indexes for table `product_order`
 --
 ALTER TABLE `product_order`
   ADD KEY `PRODUCT_ID` (`PRODUCT_ID`),
   ADD KEY `ORDER_ID` (`ORDER_ID`);
 
 --
--- Indices de la tabla `region`
+-- Indexes for table `region`
 --
 ALTER TABLE `region`
   ADD PRIMARY KEY (`REGION_ID`);
 
 --
--- Indices de la tabla `shipment`
+-- Indexes for table `shipment`
 --
 ALTER TABLE `shipment`
   ADD PRIMARY KEY (`SHIPMENT_ID`),
@@ -219,13 +233,13 @@ ALTER TABLE `shipment`
   ADD KEY `SHIPMENT_FINAL_DESTINATION` (`SHIPMENT_FINAL_DESTINATION`);
 
 --
--- Indices de la tabla `shipment_order`
+-- Indexes for table `shipment_order`
 --
 ALTER TABLE `shipment_order`
   ADD PRIMARY KEY (`ORDER_ID`);
 
 --
--- Indices de la tabla `warehouse`
+-- Indexes for table `warehouse`
 --
 ALTER TABLE `warehouse`
   ADD PRIMARY KEY (`WAREHOUSE_ID`),
@@ -234,17 +248,17 @@ ALTER TABLE `warehouse`
   ADD KEY `WAREHOUSE_COMPANY_ID` (`WAREHOUSE_COMPANY_ID`);
 
 --
--- Restricciones para tablas volcadas
+-- Constraints for dumped tables
 --
 
 --
--- Filtros para la tabla `city`
+-- Constraints for table `city`
 --
 ALTER TABLE `city`
   ADD CONSTRAINT `city_ibfk_1` FOREIGN KEY (`REGION_ID`) REFERENCES `region` (`REGION_ID`);
 
 --
--- Filtros para la tabla `company`
+-- Constraints for table `company`
 --
 ALTER TABLE `company`
   ADD CONSTRAINT `company_ibfk_1` FOREIGN KEY (`COMPANY_CATEGORY_ID`) REFERENCES `company_category` (`COMPANY_CATEGORY_ID`),
@@ -252,7 +266,13 @@ ALTER TABLE `company`
   ADD CONSTRAINT `company_ibfk_3` FOREIGN KEY (`COMPANY_REGION_ID`) REFERENCES `region` (`REGION_ID`);
 
 --
--- Filtros para la tabla `product`
+-- Constraints for table `COMPANY_USER`
+--
+ALTER TABLE `COMPANY_USER`
+  ADD CONSTRAINT `fk_customer` FOREIGN KEY (`USER_COMPANY_ID`) REFERENCES `company` (`ID_COMPANY`);
+
+--
+-- Constraints for table `product`
 --
 ALTER TABLE `product`
   ADD CONSTRAINT `product_ibfk_1` FOREIGN KEY (`PRODUCT_CATEGORY_ID`) REFERENCES `product_category` (`PRODUCT_CATEGORY_ID`),
@@ -260,14 +280,14 @@ ALTER TABLE `product`
   ADD CONSTRAINT `product_ibfk_3` FOREIGN KEY (`PRODUCT_COMPANY_ID`) REFERENCES `company` (`ID_COMPANY`);
 
 --
--- Filtros para la tabla `product_order`
+-- Constraints for table `product_order`
 --
 ALTER TABLE `product_order`
   ADD CONSTRAINT `product_order_ibfk_1` FOREIGN KEY (`PRODUCT_ID`) REFERENCES `product` (`PRODUCT_ID`),
   ADD CONSTRAINT `product_order_ibfk_2` FOREIGN KEY (`ORDER_ID`) REFERENCES `shipment_order` (`ORDER_ID`);
 
 --
--- Filtros para la tabla `shipment`
+-- Constraints for table `shipment`
 --
 ALTER TABLE `shipment`
   ADD CONSTRAINT `shipment_ibfk_1` FOREIGN KEY (`ORDER_ID`) REFERENCES `shipment_order` (`ORDER_ID`),
@@ -277,7 +297,7 @@ ALTER TABLE `shipment`
   ADD CONSTRAINT `shipment_ibfk_5` FOREIGN KEY (`SHIPMENT_FINAL_DESTINATION`) REFERENCES `city` (`CITY_ID`);
 
 --
--- Filtros para la tabla `warehouse`
+-- Constraints for table `warehouse`
 --
 ALTER TABLE `warehouse`
   ADD CONSTRAINT `warehouse_ibfk_1` FOREIGN KEY (`WAREHOUSE_CITY_ID`) REFERENCES `city` (`CITY_ID`),
