@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="ee5facdc-0fd7-4535-9b92-af0f777b6b8b" name="Changes" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/inventory/src/main/java/com/smartlogix/inventory/controller/ProductController.java" beforeDir="false" afterPath="$PROJECT_DIR$/inventory/src/main/java/com/smartlogix/inventory/controller/ProductController.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +67,7 @@
       <option name="presentableId" value="Default" />
       <updated>1776267799101</updated>
       <workItem from="1776267800842" duration="371000" />
-      <workItem from="1776268189262" duration="2912000" />
+      <workItem from="1776268189262" duration="4219000" />
     </task>
     <servers />
   </component>
