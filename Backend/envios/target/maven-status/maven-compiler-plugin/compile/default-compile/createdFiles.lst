@@ -1,0 +1,9 @@
+com\smartlogix\envios\model\Shipment.class
+com\smartlogix\envios\model\ShipmentStatus.class
+com\smartlogix\envios\repository\ShipmentRepository.class
+com\smartlogix\envios\controller\GlobalExceptionHandler.class
+com\smartlogix\envios\controller\ShipmentController.class
+com\smartlogix\envios\dto\ShipmentRequest.class
+com\smartlogix\envios\service\ShipmentService.class
+com\smartlogix\envios\dto\ShipmentResponse.class
+com\smartlogix\envios\ShipmentApplication.class
