@@ -1,5 +1,8 @@
+com\smartlogix\envios\config\WebClientConfig.class
 com\smartlogix\envios\model\ShipmentStatus.class
+com\smartlogix\envios\client\InventoryServiceClient.class
 com\smartlogix\envios\controller\GlobalExceptionHandler.class
+com\smartlogix\envios\client\OrderServiceClient.class
 com\smartlogix\envios\dto\ShipmentResponse.class
 com\smartlogix\envios\ShipmentApplication.class
 com\smartlogix\envios\model\Shipment.class

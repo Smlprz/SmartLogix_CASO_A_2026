@@ -1,12 +1,12 @@
-C:\Users\Y409-PCXX\Desktop\a\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\repository\ShipmentRepository.java
-C:\Users\Y409-PCXX\Desktop\a\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\model\Shipment.java
-C:\Users\Y409-PCXX\Desktop\a\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\controller\ShipmentController.java
-C:\Users\Y409-PCXX\Desktop\a\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\dto\ShipmentResponse.java
-C:\Users\Y409-PCXX\Desktop\a\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\client\OrderServiceClient.java
-C:\Users\Y409-PCXX\Desktop\a\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\config\WebClientConfig.java
-C:\Users\Y409-PCXX\Desktop\a\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\dto\ShipmentRequest.java
-C:\Users\Y409-PCXX\Desktop\a\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\client\InventoryServiceClient.java
-C:\Users\Y409-PCXX\Desktop\a\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\ShipmentApplication.java
-C:\Users\Y409-PCXX\Desktop\a\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\controller\GlobalExceptionHandler.java
-C:\Users\Y409-PCXX\Desktop\a\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\model\ShipmentStatus.java
-C:\Users\Y409-PCXX\Desktop\a\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\service\ShipmentService.java
+C:\Users\smlpr\OneDrive\Escritorio\Actualizacion de repo SmartLogix\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\service\ShipmentService.java
+C:\Users\smlpr\OneDrive\Escritorio\Actualizacion de repo SmartLogix\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\repository\ShipmentRepository.java
+C:\Users\smlpr\OneDrive\Escritorio\Actualizacion de repo SmartLogix\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\model\ShipmentStatus.java
+C:\Users\smlpr\OneDrive\Escritorio\Actualizacion de repo SmartLogix\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\client\OrderServiceClient.java
+C:\Users\smlpr\OneDrive\Escritorio\Actualizacion de repo SmartLogix\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\controller\GlobalExceptionHandler.java
+C:\Users\smlpr\OneDrive\Escritorio\Actualizacion de repo SmartLogix\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\ShipmentApplication.java
+C:\Users\smlpr\OneDrive\Escritorio\Actualizacion de repo SmartLogix\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\client\InventoryServiceClient.java
+C:\Users\smlpr\OneDrive\Escritorio\Actualizacion de repo SmartLogix\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\config\WebClientConfig.java
+C:\Users\smlpr\OneDrive\Escritorio\Actualizacion de repo SmartLogix\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\dto\ShipmentResponse.java
+C:\Users\smlpr\OneDrive\Escritorio\Actualizacion de repo SmartLogix\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\controller\ShipmentController.java
+C:\Users\smlpr\OneDrive\Escritorio\Actualizacion de repo SmartLogix\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\dto\ShipmentRequest.java
+C:\Users\smlpr\OneDrive\Escritorio\Actualizacion de repo SmartLogix\SmartLogix_CASO_A_2026\Backend\envios\src\main\java\com\smartlogix\envios\model\Shipment.java

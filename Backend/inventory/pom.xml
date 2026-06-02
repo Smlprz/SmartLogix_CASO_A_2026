@@ -119,8 +119,8 @@
     <configuration>
         <excludes>
             <!-- Ajusta estos paquetes al nombre de TU proyecto -->
-            <exclude>com/smartlogix/inventory/InventoryApplication.java</exclude>
-            <exclude>com/smartlogix/inventory/controller/ProductController.java</exclude>
+            <exclude>com/smartlogix/inventory/InventoryApplication.class</exclude>
+            <exclude>com/smartlogix/inventory/config/*.class</exclude>
         </excludes>
     </configuration>
     <executions>
