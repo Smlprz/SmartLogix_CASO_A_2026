@@ -6,6 +6,7 @@ import com.smartlogix.usuario.model.Company;
 import com.smartlogix.usuario.model.CompanyUser;
 import com.smartlogix.usuario.repository.CompanyRepository;
 import com.smartlogix.usuario.repository.UserRepository;
+import com.smartlogix.usuario.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
@@ -20,6 +21,15 @@ public class UserService {
     @Autowired
     private CompanyRepository companyRepository;
 
+    @Autowired
+    private JwtUtil jwtUtil;
+
+    /**
+     * Autentica un usuario y genera un JWT si las credenciales son válidas
+     *
+     * @param loginRequest Contiene username y password
+     * @return LoginResponse con token JWT si es exitoso, sin token si falla
+     */
     public LoginResponse login(LoginRequest loginRequest) {
         CompanyUser user = userRepository.findByUsernameAndPassword(
                 loginRequest.getUsername(),
@@ -27,15 +37,19 @@ public class UserService {
         ).orElse(null);
 
         if (user != null) {
+            // Generar JWT con información del usuario
+            String token = jwtUtil.generateToken(user.getUserId(), user.getUsername());
+
             return new LoginResponse(
                     user.getUserId(),
                     user.getUsername(),
                     user.getCompany() != null ? user.getCompany().getIdCompany().longValue() : null,
                     user.getCompany() != null ? user.getCompany().getCompanyName() : null,
+                    token,  // Token JWT
                     "Login exitoso"
             );
         } else {
-            return new LoginResponse(null, null, null, null, "Usuario o contraseña incorrectos");
+            return new LoginResponse(null, null, null, null, null, "Usuario o contraseña incorrectos");
         }
     }
 

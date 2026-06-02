@@ -6,6 +6,7 @@ import com.smartlogix.usuario.model.Company;
 import com.smartlogix.usuario.model.CompanyUser;
 import com.smartlogix.usuario.repository.CompanyRepository;
 import com.smartlogix.usuario.repository.UserRepository;
+import com.smartlogix.usuario.util.JwtUtil;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -32,6 +33,9 @@ class UserServiceTest {
 
     @Mock
     private CompanyRepository companyRepository;
+
+    @Mock
+    private JwtUtil jwtUtil;
 
     @InjectMocks
     private UserService userService;
@@ -64,8 +68,12 @@ class UserServiceTest {
         loginRequest.setUsername("testuser");
         loginRequest.setPassword("password123");
 
+        String mockToken = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.test.token";
+
         when(userRepository.findByUsernameAndPassword("testuser", "password123"))
                 .thenReturn(Optional.of(testUser));
+        when(jwtUtil.generateToken(1L, "testuser"))
+                .thenReturn(mockToken);
 
         // Act
         LoginResponse response = userService.login(loginRequest);
@@ -75,8 +83,10 @@ class UserServiceTest {
         assertEquals(1L, response.getUserId());
         assertEquals("testuser", response.getUsername());
         assertEquals("Test Company", response.getCompanyName());
+        assertEquals(mockToken, response.getToken());
         assertEquals("Login exitoso", response.getMessage());
         verify(userRepository, times(1)).findByUsernameAndPassword("testuser", "password123");
+        verify(jwtUtil, times(1)).generateToken(1L, "testuser");
     }
 
     @Test
@@ -134,8 +144,12 @@ class UserServiceTest {
         loginRequest.setUsername("nocompanyuser");
         loginRequest.setPassword("password123");
 
+        String mockToken = "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.test.token";
+
         when(userRepository.findByUsernameAndPassword("nocompanyuser", "password123"))
                 .thenReturn(Optional.of(userNoCompany));
+        when(jwtUtil.generateToken(2L, "nocompanyuser"))
+                .thenReturn(mockToken);
 
         // Act
         LoginResponse response = userService.login(loginRequest);
@@ -145,7 +159,9 @@ class UserServiceTest {
         assertEquals(2L, response.getUserId());
         assertNull(response.getCompanyId());
         assertNull(response.getCompanyName());
+        assertEquals(mockToken, response.getToken());
         assertEquals("Login exitoso", response.getMessage());
+        verify(jwtUtil, times(1)).generateToken(2L, "nocompanyuser");
     }
 
     // ==================== GET ALL USERS TESTS ====================
