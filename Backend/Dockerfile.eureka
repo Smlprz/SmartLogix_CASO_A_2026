@@ -1,22 +1,30 @@
-# Build stage
-FROM maven:3.9-eclipse-temurin-17 AS builder
+# --- Build Stage ---
+FROM maven:3.9.6-eclipse-temurin-17-alpine AS build
 WORKDIR /app
-COPY eureka-server/pom.xml .
-RUN mvn dependency:go-offline -DexcludeTransitive
 
-COPY eureka-server/src ./src
+# Descargar dependencias primero (caché de Docker)
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copiar código y compilar
+COPY src ./src
 RUN mvn clean package -DskipTests
 
-# Runtime stage
+# --- Runtime Stage ---
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-COPY --from=builder /app/target/eureka-server-*.jar app.jar
 
-EXPOSE 8761
-ENV SPRING_APPLICATION_NAME=eureka-server
-ENV SERVER_PORT=8761
+# Usuario de seguridad (no root)
+RUN addgroup -S spring && adduser -S spring -G spring
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
-    CMD wget --quiet --tries=1 --spider http://localhost:8761/actuator/health || exit 1
+# Copiar JAR compilado
+COPY --from=build /app/target/*.jar app.jar
 
-ENTRYPOINT ["java", "-jar", "app.jar"]
+USER spring:spring
+
+EXPOSE 8080
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
+    CMD wget --quiet --tries=1 --spider http://localhost:8080/actuator/health || exit 1
+
+ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-jar", "app.jar"]

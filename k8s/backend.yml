@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: smartlogix-deployment
+  labels:
+    app: smartlogix
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: smartlogix
+  template:
+    metadata:
+      labels:
+        app: smartlogix
+    spec:
+      containers:
+      - name: smartlogix-app
+        image: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.us-east-1.amazonaws.com/smartlogix:${IMAGE_TAG}
+        ports:
+        - containerPort: 8080
+        env:
+        - name: DB_HOST
+          value: "postgres"
+        - name: DB_PORT
+          value: "5432"
+        - name: DB_NAME
+          value: "smartlogix_db"
+        - name: DB_USER
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: username
+        - name: DB_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: db-credentials
+              key: password
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: smartlogix-service
+spec:
+  type: LoadBalancer
+  selector:
+    app: smartlogix
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
