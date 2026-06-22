@@ -1,0 +1,197 @@
+version: '3.8'
+
+services:
+  # Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: smartlogix-postgres
+    environment:
+      POSTGRES_USER: ${DB_USER:-smartlogix}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-smartlogix123}
+      POSTGRES_DB: ${DB_NAME:-smartlogix_db}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER:-smartlogix}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - smartlogix-network
+
+  # Eureka Server (Service Registry)
+  eureka-server:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile.eureka
+    container_name: smartlogix-eureka
+    ports:
+      - "8761:8761"
+    environment:
+      EUREKA_CLIENT_REGISTER_WITH_EUREKA: "false"
+      EUREKA_CLIENT_FETCH_REGISTRY: "false"
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8761/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - smartlogix-network
+
+  # Usuario Service
+  usuario:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile.backend
+      args:
+        SERVICE_NAME: usuario
+        SERVICE_VERSION: 1.0.0
+    container_name: smartlogix-usuario
+    ports:
+      - "8081:8080"
+    environment:
+      SPRING_APPLICATION_NAME: usuario
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-smartlogix_db}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-smartlogix}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-smartlogix123}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SERVER_PORT: 8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - smartlogix-network
+
+  # Pedidos Service
+  pedidos:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile.backend
+      args:
+        SERVICE_NAME: pedidos
+        SERVICE_VERSION: 1.0.0
+    container_name: smartlogix-pedidos
+    ports:
+      - "8082:8080"
+    environment:
+      SPRING_APPLICATION_NAME: pedidos
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-smartlogix_db}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-smartlogix}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-smartlogix123}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SERVER_PORT: 8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - smartlogix-network
+
+  # Envios Service
+  envios:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile.eureka
+    container_name: smartlogix-envios
+    ports:
+      - "8083:8080"
+    environment:
+      SPRING_APPLICATION_NAME: envios
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-smartlogix_db}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-smartlogix}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-smartlogix123}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SERVER_PORT: 8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - smartlogix-network
+
+  # Inventory Service
+  inventory:
+    build:
+      context: ./Backend
+      dockerfile: Dockerfile.backend
+      args:
+        SERVICE_NAME: inventory
+        SERVICE_VERSION: 1.0.0
+    container_name: smartlogix-inventory
+    ports:
+      - "8084:8080"
+    environment:
+      SPRING_APPLICATION_NAME: inventory
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/${DB_NAME:-smartlogix_db}
+      SPRING_DATASOURCE_USERNAME: ${DB_USER:-smartlogix}
+      SPRING_DATASOURCE_PASSWORD: ${DB_PASSWORD:-smartlogix123}
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eureka-server:8761/eureka/
+      SERVER_PORT: 8080
+    depends_on:
+      postgres:
+        condition: service_healthy
+      eureka-server:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - smartlogix-network
+
+  # Frontend
+  frontend:
+    build:
+      context: ./Frontend
+      dockerfile: Dockerfile
+    container_name: smartlogix-frontend
+    ports:
+      - "80:80"
+    environment:
+      VITE_API_URL: http://localhost:8081
+    depends_on:
+      - usuario
+      - pedidos
+      - envios
+      - inventory
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost:80/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    networks:
+      - smartlogix-network
+
+volumes:
+  postgres_data:
+    driver: local
+
+networks:
+  smartlogix-network:
+    driver: bridge

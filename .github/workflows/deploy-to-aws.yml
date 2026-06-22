@@ -1,0 +1,148 @@
+name: Deploy to AWS ECS/EKS
+
+on:
+  workflow_run:
+    workflows: ["Build and Push to ECR"]
+    types:
+      - completed
+  workflow_dispatch:
+
+env:
+  AWS_REGION: us-east-1
+  REGISTRY: ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ env.AWS_REGION }}.amazonaws.com
+  ECS_CLUSTER: smartlogix-cluster
+  ECS_SERVICE_PREFIX: smartlogix-service
+
+jobs:
+  deploy-ecs:
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      contents: read
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: ${{ env.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Update ECS Task Definition - Frontend
+        id: task-def-frontend
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definitions/frontend-task-def.json
+          container-name: smartlogix-frontend
+          image: ${{ env.REGISTRY }}/smartlogix-frontend:${{ github.sha }}
+
+      - name: Deploy Frontend to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def-frontend.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE_PREFIX }}-frontend
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+
+      - name: Update ECS Task Definition - Usuario
+        id: task-def-usuario
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definitions/usuario-task-def.json
+          container-name: smartlogix-usuario
+          image: ${{ env.REGISTRY }}/smartlogix-usuario:${{ github.sha }}
+
+      - name: Deploy Usuario to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def-usuario.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE_PREFIX }}-usuario
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+
+      - name: Update ECS Task Definition - Pedidos
+        id: task-def-pedidos
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definitions/pedidos-task-def.json
+          container-name: smartlogix-pedidos
+          image: ${{ env.REGISTRY }}/smartlogix-pedidos:${{ github.sha }}
+
+      - name: Deploy Pedidos to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def-pedidos.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE_PREFIX }}-pedidos
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+
+      - name: Update ECS Task Definition - Envios
+        id: task-def-envios
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definitions/envios-task-def.json
+          container-name: smartlogix-envios
+          image: ${{ env.REGISTRY }}/smartlogix-envios:${{ github.sha }}
+
+      - name: Deploy Envios to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def-envios.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE_PREFIX }}-envios
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+
+      - name: Update ECS Task Definition - Inventory
+        id: task-def-inventory
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definitions/inventory-task-def.json
+          container-name: smartlogix-inventory
+          image: ${{ env.REGISTRY }}/smartlogix-inventory:${{ github.sha }}
+
+      - name: Deploy Inventory to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def-inventory.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE_PREFIX }}-inventory
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+
+      - name: Update ECS Task Definition - Eureka
+        id: task-def-eureka
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-definitions/eureka-task-def.json
+          container-name: smartlogix-eureka
+          image: ${{ env.REGISTRY }}/smartlogix-eureka:${{ github.sha }}
+
+      - name: Deploy Eureka to ECS
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.task-def-eureka.outputs.task-definition }}
+          service: ${{ env.ECS_SERVICE_PREFIX }}-eureka
+          cluster: ${{ env.ECS_CLUSTER }}
+          wait-for-service-stability: true
+
+      - name: Print Deployment Status
+        run: |
+          echo "✅ Deployment completed successfully!"
+          echo "Cluster: ${{ env.ECS_CLUSTER }}"
+          echo "Region: ${{ env.AWS_REGION }}"
+
+      - name: Generate Deployment Report
+        if: always()
+        run: |
+          echo "## Deployment Report" >> $GITHUB_STEP_SUMMARY
+          echo "- **Deployment Date**: $(date)" >> $GITHUB_STEP_SUMMARY
+          echo "- **Cluster**: ${{ env.ECS_CLUSTER }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Region**: ${{ env.AWS_REGION }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Image Tag**: ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+          echo "- **Status**: ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
