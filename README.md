@@ -20,7 +20,7 @@ El sistema está basado en una arquitectura de microservicios, utilizando un API
 * Order Service (Gestión de pedidos)
 * Shipping Service (Gestión de envíos)
 * Auth Service (Autenticación)
-
+dOCKER
 ### Arquitectura general
 
 ```
