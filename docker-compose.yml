@@ -1,71 +1,58 @@
 version: '3.8'
 
 services:
-  app-spring:
+  # Backend - Usuario Service
+  usuario:
     build:
       context: ./Backend
-    container_name: smartlogix-app
-    working_dir: /app
+    container_name: smartlogix-usuario
     environment:
-      - DB_HOST=localhost
-      - DB_PORT=5432
-      - DB_NAME=smartlogix_db
-      - DB_USER=smartlogix
-      - DB_PASSWORD=smartlogix123
+      SPRING_APPLICATION_NAME: usuario
+      SERVER_PORT: 8080
     ports:
-      - "8080:8080"
+      - "8081:8080"
     networks:
-      - monitoring-net
-    healthcheck:
-      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8080/actuator/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      - smartlogix-net
 
-  # Observabilidad - Loki (Logs)
-  loki:
-    image: grafana/loki:2.9.0
-    ports:
-      - "3100:3100"
-    command: -config.file=/etc/loki/local-config.yaml
-    networks:
-      - monitoring-net
-
-  # Observabilidad - Promtail (Log Forwarder)
-  promtail:
-    image: grafana/promtail:2.9.0
-    volumes:
-      - ./logs:/var/log/spring
-    command: -config.file=/etc/promtail/config.yml
-    networks:
-      - monitoring-net
-
-  # Observabilidad - Tempo (Traces)
-  tempo:
-    image: grafana/tempo:latest
-    container_name: tempo
-    command: [ "-config.file=/etc/tempo.yaml" ]
-    volumes:
-      - ./tempo/tempo.yaml:/etc/tempo.yaml
-    ports:
-      - "3200:3200"
-      - "4317:4317"
-      - "4318:4318"
-    networks:
-      - monitoring-net
-
-  # Observabilidad - Grafana (Dashboard)
-  grafana:
-    image: grafana/grafana:latest
-    container_name: grafana
+  # Backend - Pedidos Service
+  pedidos:
+    build:
+      context: ./Backend
+    container_name: smartlogix-pedidos
     environment:
-      - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=admin
+      SPRING_APPLICATION_NAME: pedidos
+      SERVER_PORT: 8080
     ports:
-      - "3000:3000"
+      - "8082:8080"
     networks:
-      - monitoring-net
+      - smartlogix-net
+
+  # Backend - Inventario Service
+  inventario:
+    build:
+      context: ./Backend
+    container_name: smartlogix-inventario
+    environment:
+      SPRING_APPLICATION_NAME: inventario
+      SERVER_PORT: 8080
+    ports:
+      - "8083:8080"
+    networks:
+      - smartlogix-net
+
+  # Backend - Envios Service
+  envios:
+    build:
+      context: ./Backend
+    container_name: smartlogix-envios
+    environment:
+      SPRING_APPLICATION_NAME: envios
+      SERVER_PORT: 8080
+    ports:
+      - "8084:8080"
+    networks:
+      - smartlogix-net
 
 networks:
-  monitoring-net:
+  smartlogix-net:
     driver: bridge
