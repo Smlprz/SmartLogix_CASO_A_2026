@@ -22,7 +22,7 @@ El sistema está basado en una arquitectura de microservicios, utilizando un API
 * Auth Service (Autenticación)
 
 ### Arquitectura general
-
+AASDFASDF
 ```
 Frontend
    |
